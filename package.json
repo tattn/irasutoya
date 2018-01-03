@@ -1,0 +1,32 @@
+{
+  "name": "irasutoya",
+  "version": "1.0.0",
+  "description": "irasutoya (www.irasutoya.com) client",
+  "main": "server.js",
+  "scripts": {
+    "build": "npm run lint && tsc",
+    "watch": "tsc --watch",
+	"lint": "tslint 'src/**/*.ts'",
+	"lint:fix": "tslint --fix 'src/**/*.ts'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "irasutoya",
+    "いらすとや"
+  ],
+  "author": "tattn (Tatsuya Tanaka)",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "^4.11.0",
+    "@types/node": "^8.5.2",
+    "@types/node-fetch": "^1.6.7",
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.2"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.2",
+    "node-fetch": "^2.0.0-alpha.9",
+    "request": "^2.83.0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "removeComments": true,
+    "module": "commonjs",
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "dst",
+    "types" : ["node"]
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
