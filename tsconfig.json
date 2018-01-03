@@ -4,7 +4,7 @@
     "module": "commonjs",
     "target": "es2017",
     "sourceMap": true,
-    "outDir": "dst",
+    "outDir": "lib",
     "types" : ["node"]
   },
   "exclude": [

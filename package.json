@@ -4,6 +4,7 @@
   "description": "irasutoya (www.irasutoya.com) client",
   "main": "server.js",
   "scripts": {
+    "prepublish": "npm run build",
     "build": "npm run lint && tsc",
     "watch": "tsc --watch",
 	"lint": "tslint 'src/**/*.ts'",
