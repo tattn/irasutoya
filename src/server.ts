@@ -1,10 +1,10 @@
 import * as irasutoya from "./irasutoya";
 import * as express from "express";
 
-class Server {
+export class Server {
   public app: express.Application;
 
-  constructor() {
+  public constructor() {
     this.app = express();
     this.routes();
   }
@@ -26,6 +26,3 @@ class Server {
     });
   }
 }
-
-const server = new Server();
-server.listen();

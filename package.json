@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "description": "irasutoya (www.irasutoya.com) client",
   "main": "server.js",
+  "bin": {
+    "irasutoya-server": "./bin/irasutoya-server"
+  },
   "scripts": {
     "prepublish": "npm run build",
     "build": "npm run lint && tsc",
     "watch": "tsc --watch",
-	"lint": "tslint 'src/**/*.ts'",
-	"lint:fix": "tslint --fix 'src/**/*.ts'",
+    "lint": "tslint 'src/**/*.ts'",
+    "lint:fix": "tslint --fix 'src/**/*.ts'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -28,6 +31,7 @@
     "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.2",
     "node-fetch": "^2.0.0-alpha.9",
-    "request": "^2.83.0"
+    "request": "^2.83.0",
+    "source-map-support": "^0.5.0"
   }
 }
