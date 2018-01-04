@@ -1,13 +1,13 @@
 import * as cheerio from "cheerio";
 import fetch from "node-fetch";
 import { checkServerIdentity } from "tls";
-import * as decode from "unescape";
 
 export class ImageDetail {
   constructor(
     public title: string,
     public imageUrl: string,
-    public description: string
+    public description: string,
+    public categories: string[]
   ) {}
 }
 
@@ -20,41 +20,31 @@ async function fetchXml(url: string): Promise<CheerioStatic> {
   return parseXml(await xml.text());
 }
 
-async function searchEntryUrls(query: string): Promise<string[]> {
-  const url = `http://www.irasutoya.com/search?q=${encodeURIComponent(query)}`;
+async function fetchJson(url: string): Promise<any> {
   const res = await fetch(url);
-  const $ = cheerio.load(await res.text());
-  return $(".boxim > a").toArray().map((e, i) => $(e).attr("href"));
+  return res.json();
 }
 
-async function fetchImageDetail(url: string): Promise<ImageDetail> {
-  const entries = await fetch(url);
-  const $ = cheerio.load(await entries.text());
-
-  let detail = new ImageDetail(
-    $(".title h2").text().trim(),
-    $(".entry .separator a").attr("href"),
-    $(".entry .separator").text().trim()
-  );
-
-  return detail;
+export async function search(query: string): Promise<ImageDetail[]> {
+  const url = `http://www.irasutoya.com/feeds/posts/default?q=${encodeURIComponent(query)}&alt=json&start-index=1&max-results=20`;
+  const json = await fetchJson(url);
+  const entries = json.feed.entry;
+  return entries.map((e, i) => {
+    const $ = parseXml(e.content.$t);
+    return new ImageDetail(
+      e.title.$t,
+      $("img").attr("src"),
+      $("div").last().text(),
+      e.category.map((e, i) => e.term)
+    );
+  });
 }
 
 export async function searchImage(query: string): Promise<ImageDetail> {
-  try {
-    const urls = await searchEntryUrls(query);
-    if (urls.length === 0) {
-      throw new Error("Not found");
-    }
-
-    const entryUrl = urls[Math.floor(Math.random() * urls.length)];
-    const imageDetail = await fetchImageDetail(entryUrl);
-    console.log(imageDetail);
-
-    return imageDetail;
-  } catch (error) {
-    console.log(error);
-  }
+  const imageDetails = await search(query);
+  const picked = imageDetails[Math.floor(Math.random() * (imageDetails.length - 1))];
+  console.log(picked);
+  return picked;
 }
 
 async function totalImageCount(): Promise<number> {
@@ -65,7 +55,7 @@ async function totalImageCount(): Promise<number> {
 
 export async function randomImage(): Promise<ImageDetail> {
   const maxIndex = await totalImageCount() - 1;
-  const index = Math.floor(Math.random() * maxIndex);
+  const index = Math.floor(Math.random() * maxIndex) + 1;
   const url = `http://www.irasutoya.com/feeds/posts/summary?start-index=${index}&max-results=1`;
   const $ = await fetchXml(url);
   const imageDetailUrl = $("entry link[rel='edit']").attr("href");
@@ -78,7 +68,8 @@ async function parseEntryDetailXml(url: string): Promise<ImageDetail> {
   const detail = new ImageDetail(
     $("title").text().trim(),
     $$("div img").attr("src"),
-    $$("div").last().text().trim()
+    $$("div").last().text().trim(),
+    $("entry category").toArray().map((e, i) => $(e).attr("term"))
   );
 
   return detail;

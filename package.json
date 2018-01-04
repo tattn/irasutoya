@@ -8,14 +8,16 @@
   },
   "scripts": {
     "start": "node bin/irasutoya-server",
-    "prepublish": "npm run build",
+    "prepare": "npm run build",
     "build": "npm run lint && tsc",
     "watch": "tsc --watch",
     "lint": "tslint 'src/**/*.ts'",
     "lint:fix": "tslint --fix 'src/**/*.ts'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "engines": { "node": "9.x" },
+  "engines": {
+    "node": "9.x"
+  },
   "keywords": [
     "irasutoya",
     "いらすとや"
@@ -35,7 +37,6 @@
     "express": "^4.16.2",
     "node-fetch": "^2.0.0-alpha.9",
     "request": "^2.83.0",
-    "source-map-support": "^0.5.0",
-    "unescape": "^1.0.1"
+    "source-map-support": "^0.5.0"
   }
 }
