@@ -16,6 +16,10 @@ export class Server {
       const detail = await irasutoya.searchImage(query);
       res.json(detail);
     });
+    router.get("/random", async (req, res, next) => {
+      const detail = await irasutoya.randomImage();
+      res.json(detail);
+    });
     this.app.use("/", router);
   }
 
