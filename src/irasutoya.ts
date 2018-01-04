@@ -2,6 +2,25 @@ import * as cheerio from "cheerio";
 import fetch from "node-fetch";
 import { checkServerIdentity } from "tls";
 
+namespace API {
+  const hostname = "www.irasutoya.com";
+  const basePath = `http://${hostname}`;
+
+  type Endpoint = "/feeds/posts/default" | "/feeds/posts/summary";
+  export namespace Endpoint {
+    export const DEFAULT: Endpoint = "/feeds/posts/default";
+    export const SUMMARY: Endpoint = "/feeds/posts/summary";
+  }
+
+  interface Parameter {
+    [index: string]: any;
+  }
+
+  export function buildUrl(endpoint: Endpoint, params: Parameter): string {
+    return `${basePath}${endpoint}?alt=json&${Object.keys(params).map((e, i) => `${e}=${params[e]}`).join("&")}`;
+  }
+}
+
 export class ImageDetail {
   constructor(
     public title: string,
@@ -9,6 +28,16 @@ export class ImageDetail {
     public description: string,
     public categories: string[]
   ) {}
+
+  static parseJsonEntry(entry: any): ImageDetail {
+    const $ = parseXml(entry.content.$t);
+    return new ImageDetail(
+      entry.title.$t,
+      $("img").attr("src"),
+      $("div").last().text(),
+      entry.category.map((e, i) => e.term)
+    );
+  }
 }
 
 function parseXml(xml: string): CheerioStatic {
@@ -26,18 +55,10 @@ async function fetchJson(url: string): Promise<any> {
 }
 
 export async function search(query: string): Promise<ImageDetail[]> {
-  const url = `http://www.irasutoya.com/feeds/posts/default?q=${encodeURIComponent(query)}&alt=json&start-index=1&max-results=20`;
+  const url = API.buildUrl(API.Endpoint.DEFAULT, {q: encodeURIComponent(query), "start-index": 1, "max-results": 20});
   const json = await fetchJson(url);
   const entries = json.feed.entry;
-  return entries.map((e, i) => {
-    const $ = parseXml(e.content.$t);
-    return new ImageDetail(
-      e.title.$t,
-      $("img").attr("src"),
-      $("div").last().text(),
-      e.category.map((e, i) => e.term)
-    );
-  });
+  return entries.map((e, i) => ImageDetail.parseJsonEntry(e));
 }
 
 export async function searchImage(query: string): Promise<ImageDetail> {
@@ -47,30 +68,16 @@ export async function searchImage(query: string): Promise<ImageDetail> {
   return picked;
 }
 
-async function totalImageCount(): Promise<number> {
-  const url = "http://www.irasutoya.com/feeds/posts/summary?max-results=0";
-  const $ = await fetchXml(url);
-  return +$("openSearch\\:totalResults").text();
+export async function totalImageCount(): Promise<number> {
+  const url = API.buildUrl(API.Endpoint.SUMMARY, {"max-results": 0});
+  const json = await fetchJson(url);
+  return +json.feed.openSearch$totalResults.$t;
 }
 
 export async function randomImage(): Promise<ImageDetail> {
   const maxIndex = await totalImageCount() - 1;
   const index = Math.floor(Math.random() * maxIndex) + 1;
-  const url = `http://www.irasutoya.com/feeds/posts/summary?start-index=${index}&max-results=1`;
-  const $ = await fetchXml(url);
-  const imageDetailUrl = $("entry link[rel='edit']").attr("href");
-  return parseEntryDetailXml(imageDetailUrl);
-}
-
-async function parseEntryDetailXml(url: string): Promise<ImageDetail> {
-  const $ = await fetchXml(url);
-  const $$ = parseXml($("content").text());
-  const detail = new ImageDetail(
-    $("title").text().trim(),
-    $$("div img").attr("src"),
-    $$("div").last().text().trim(),
-    $("entry category").toArray().map((e, i) => $(e).attr("term"))
-  );
-
-  return detail;
+  const url = API.buildUrl(API.Endpoint.DEFAULT, {"start-index": index, "max-results": 1});
+  const json = await fetchJson(url);
+  return ImageDetail.parseJsonEntry(json.feed.entry[0]);
 }
