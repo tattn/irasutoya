@@ -1,6 +1,6 @@
 {
   "name": "irasutoya",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "irasutoya (www.irasutoya.com) client",
   "main": "server.js",
   "bin": {
