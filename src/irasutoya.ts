@@ -17,7 +17,9 @@ namespace API {
   }
 
   export function buildUrl(endpoint: Endpoint, params: Parameter): string {
-    return `${basePath}${endpoint}?alt=json&${Object.keys(params).map((e, i) => `${e}=${params[e]}`).join("&")}`;
+    const keys = Object.keys(params);
+    const queryParam = keys.length === 0 ? "" : `&${keys.map((e, i) => `${e}=${params[e]}`).join("&")}`;
+    return `${basePath}${endpoint}?alt=json${queryParam}`;
   }
 }
 

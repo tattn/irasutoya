@@ -4,12 +4,19 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Compile TypeScript",
-            "type": "typescript",
-            "tsconfig": "tsconfig.json",
+            "label": "Compile Sources",
+            "group": "build",
+            "type": "shell",
+            "command": "npm run build:src",
             "problemMatcher": [
                 "$tsc"
             ]
+        },
+        {
+            "label": "Unit Test",
+            "group": "test",
+            "type": "shell",
+            "command": "npm run test"
         }
     ]
 }
