@@ -2,7 +2,7 @@
   "name": "irasutoya",
   "version": "1.0.3",
   "description": "irasutoya (www.irasutoya.com) client",
-  "main": "server.js",
+  "main": "index.js",
   "bin": {
     "irasutoya-server": "./bin/irasutoya-server"
   },

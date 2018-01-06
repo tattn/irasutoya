@@ -31,3 +31,6 @@ app.json
 circle.yml
 tslint.json
 npm-debug.log
+
+# build
+out
