@@ -7,6 +7,7 @@
     "irasutoya-server": "./bin/irasutoya-server"
   },
   "scripts": {
+    "clean": "rimraf lib/ out/",
     "start": "node bin/irasutoya-server",
     "prepare": "npm run build",
     "build": "npm run lint && npm-run-all -p build:*",
@@ -16,6 +17,7 @@
     "lint": "tslint 'src/**/*.ts'",
     "lint:fix": "tslint --fix 'src/**/*.ts'",
     "test": "npm run build:test && mocha out/**/*.js",
+    "posttest": "rimraf out/",
     "publish:patch": "npm version patch && git push origin master --tags && npm publish ./",
     "publish:minor": "npm version minor && git push origin master --tags && npm publish ./",
     "publish:major": "npm version major && git push origin master --tags && npm publish ./"
@@ -39,6 +41,7 @@
     "mocha": "^4.1.0",
     "npm-run-all": "^4.1.2",
     "power-assert": "^1.4.4",
+    "rimraf": "^2.6.2",
     "ts-node": "^4.1.0",
     "tslint": "^5.8.0",
     "typescript": "^2.6.2"
