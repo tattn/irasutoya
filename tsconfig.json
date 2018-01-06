@@ -4,10 +4,12 @@
     "module": "commonjs",
     "target": "es2017",
     "sourceMap": true,
+    "rootDir": "src",
     "outDir": "lib",
     "types" : ["node"]
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "test"
   ]
 }
