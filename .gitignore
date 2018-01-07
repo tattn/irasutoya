@@ -92,3 +92,4 @@ typings/
 lib
 out
 test/**/*.js.map
+coverage
