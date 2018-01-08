@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 require("source-map-support/register");
-const irasutoya = require("../lib/server");
+const irasutoya = require("../lib/irasutoya");
 
 const server = new irasutoya.Server();
 server.listen();

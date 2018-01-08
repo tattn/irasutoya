@@ -56,6 +56,7 @@
       "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testPathIgnorePatterns": ["<rootDir>/node_modules/", "<rootDir>/out/"],
     "moduleFileExtensions": [
       "ts",
       "tsx",

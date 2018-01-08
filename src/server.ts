@@ -1,4 +1,4 @@
-import * as irasutoya from "./irasutoya";
+import * as api from "./api";
 import * as express from "express";
 
 export class Server {
@@ -13,11 +13,11 @@ export class Server {
     let router = express.Router();
     router.get("/search", async (req, res, next) => {
       const query = req.query.query;
-      const detail = await irasutoya.searchImage(query);
+      const detail = await api.searchImage(query);
       res.json(detail);
     });
     router.get("/random", async (req, res, next) => {
-      const detail = await irasutoya.randomImage();
+      const detail = await api.randomImage();
       res.json(detail);
     });
     this.app.use("/", router);
