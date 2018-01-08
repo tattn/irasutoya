@@ -11,7 +11,7 @@ namespace API {
     export const SUMMARY: Endpoint = "/feeds/posts/summary";
   }
 
-  interface Parameter {
+  export interface Parameter {
     [index: string]: any;
   }
 
@@ -19,6 +19,20 @@ namespace API {
     const keys = Object.keys(params);
     const queryParam = keys.length === 0 ? "" : `&${keys.map((e, i) => `${e}=${params[e]}`).join("&")}`;
     return `${basePath}${endpoint}?alt=json${queryParam}`;
+  }
+}
+
+class SummaryResuponse {
+  constructor(
+    public totalResults: number,
+    public imageDetails: ImageDetail[]
+  ) {}
+
+  static parseJson(json: any): SummaryResuponse {
+    return new SummaryResuponse(
+      +json.feed.openSearch$totalResults.$t,
+      json.feed.entry.map((e, i) => ImageDetail.parseJsonEntry(e))
+    );
   }
 }
 
@@ -31,7 +45,16 @@ export class ImageDetail {
   ) {}
 
   static parseJsonEntry(entry: any): ImageDetail {
-    const $ = parseXml(entry.content.$t);
+    return new ImageDetail(
+      entry.title.$t,
+      entry.media$thumbnail.url.replace("/s72-c/", "/"),
+      entry.summary.$t,
+      entry.category.map((e, i) => e.term)
+    );
+  }
+
+  static __parseJsonEntryForDefault(entry: any): ImageDetail {
+    const $ = cheerio.load(entry.content.$t, {xmlMode: true});
     return new ImageDetail(
       entry.title.$t,
       $("img").attr("src"),
@@ -41,13 +64,12 @@ export class ImageDetail {
   }
 }
 
-function parseXml(xml: string): CheerioStatic {
-  return cheerio.load(xml, {xmlMode: true});
-}
-
-async function fetchXml(url: string): Promise<CheerioStatic> {
-  const xml = await fetch(url);
-  return parseXml(await xml.text());
+async function requestImageEntry(startIndex: number, results: number, query?: string): Promise<SummaryResuponse> {
+  let params: API.Parameter = {"start-index": startIndex, "max-results": results};
+  if (query) { params["q"] = encodeURIComponent(query); }
+  const url = API.buildUrl(API.Endpoint.SUMMARY, params);
+  const json = await fetchJson(url);
+  return SummaryResuponse.parseJson(json);
 }
 
 async function fetchJson(url: string): Promise<any> {
@@ -56,10 +78,7 @@ async function fetchJson(url: string): Promise<any> {
 }
 
 export async function search(query: string): Promise<ImageDetail[]> {
-  const url = API.buildUrl(API.Endpoint.DEFAULT, {q: encodeURIComponent(query), "start-index": 1, "max-results": 20});
-  const json = await fetchJson(url);
-  const entries = json.feed.entry;
-  return entries.map((e, i) => ImageDetail.parseJsonEntry(e));
+  return (await requestImageEntry(1, 20, query)).imageDetails;
 }
 
 export async function searchImage(query: string): Promise<ImageDetail> {
@@ -70,15 +89,11 @@ export async function searchImage(query: string): Promise<ImageDetail> {
 }
 
 export async function totalImageCount(): Promise<number> {
-  const url = API.buildUrl(API.Endpoint.SUMMARY, {"max-results": 0});
-  const json = await fetchJson(url);
-  return +json.feed.openSearch$totalResults.$t;
+  return (await requestImageEntry(0, 0)).totalResults;
 }
 
 export async function randomImage(): Promise<ImageDetail> {
   const maxIndex = await totalImageCount() - 1;
   const index = Math.floor(Math.random() * maxIndex) + 1;
-  const url = API.buildUrl(API.Endpoint.DEFAULT, {"start-index": index, "max-results": 1});
-  const json = await fetchJson(url);
-  return ImageDetail.parseJsonEntry(json.feed.entry[0]);
+  return (await requestImageEntry(index, 1))[0];
 }

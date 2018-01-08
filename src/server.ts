@@ -13,7 +13,7 @@ export class Server {
     let router = express.Router();
     router.get("/search", async (req, res, next) => {
       const query = req.query.query;
-      const detail = await api.searchImage(query);
+      const detail = await api.search(query);
       res.json(detail);
     });
     router.get("/random", async (req, res, next) => {

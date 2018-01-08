@@ -8,3 +8,8 @@ test("randomImage", async () => {
   expect(detailImage.description).not.toBe("");
   expect(detailImage.categories).not.toBe("");
 });
+
+test("totalImageCount", async () => {
+  const count = await irasutoya.totalImageCount();
+  expect(count).toBeGreaterThan(10000);
+});
