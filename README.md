@@ -3,8 +3,8 @@
 <h5 align="center">いらすとや (http://www.irasutoya.com/) client</h5>
 
 <div align="center">
-  <a href="http://travis-ci.org/cheeriojs/cheerio">
-    <img src="https://secure.travis-ci.org/cheeriojs/cheerio.svg?branch=master" alt="Travis CI" />
+  <a href="https://travis-ci.org/tattn/irasutoya">
+    <img src="https://travis-ci.org/tattn/irasutoya.svg?branch=master" alt="Travis CI" />
   </a>
   <a href="http://badge.fury.io/js/irasutoya">
     <img src="https://badge.fury.io/js/irasutoya.svg" alt="npm version" />
@@ -16,7 +16,7 @@
 
 <br />
 
-
+NOTE: Irasutoya is a famous free illustration material service in Japan.
 
 # Installation
 
@@ -53,8 +53,17 @@ console.log(images[0]); // => { title: "猫の魚屋のイラスト", imageUrl: 
 const server = new irasutoya.Server();
 server.listen();
 ```
+or run the following script:
+
+```bash
+$ irasutoya-server
+```
 
 
+|End Point|Parameter|Description|
+|:-:|:-:|:-:|
+|`GET /random`| - |Get a random image|
+|`GET /search`|`query`[string]: a search query|Search images by the query|
 
 # Contributing
 
@@ -67,3 +76,7 @@ server.listen();
 # License
 
 irasutoya is released under the MIT license. See LICENSE for details.
+
+# Thanks
+
+いらすとや, Thank you for wonderful illustrations!
