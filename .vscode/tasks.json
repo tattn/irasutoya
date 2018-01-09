@@ -7,7 +7,7 @@
             "label": "Compile Sources",
             "group": "build",
             "type": "shell",
-            "command": "npm run build:src",
+            "command": "npm run build",
             "problemMatcher": [
                 "$tsc"
             ]
