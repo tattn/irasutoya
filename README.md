@@ -61,8 +61,8 @@ $ irasutoya-server
 
 
 |End Point|Parameter|Description|
-|:-:|:-:|:-:|
-|`GET /random`| - |Get a random image|
+|:---|:---|:---|
+|`GET /random`|(*optional*)`raw`[bool]: the response becomes a raw image if true|Get a random image|
 |`GET /search`|`query`[string]: a search query|Search images by the query|
 
 # Contributing
