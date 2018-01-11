@@ -1,5 +1,6 @@
 import * as api from "./api";
 import * as express from "express";
+import fetch from "node-fetch";
 
 export class Server {
   public app: express.Application;
@@ -17,8 +18,15 @@ export class Server {
       res.json(detail);
     });
     router.get("/random", async (req, res, next) => {
+      const raw = req.query.raw;
       const detail = await api.randomImage();
-      res.json(detail);
+      if (raw === "true") {
+        const image = await fetch(detail.imageUrl);
+        res.writeHead(200, {"Content-Type": "image/png"});
+        res.end(await image.buffer());
+      } else {
+        res.json(detail);
+      }
     });
     this.app.use("/", router);
   }
